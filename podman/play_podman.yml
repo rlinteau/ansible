@@ -1,0 +1,66 @@
+---
+- name: Podman
+  hosts: all
+  become: yes
+
+  vars:
+    podman_user: "podman"
+    podman_group: "podman"
+    #podman_app_name: "httpd"
+    podman_app_name: "docker.io/library/httpd:2.4.39"
+    podman_container_name: "web_server1"
+    podman_container_run_args:
+      - "-p 8080:80"
+
+  handlers:
+
+    - name: reload container service
+      systemd:
+        name: "{{ podman_container_name }}-container"
+        state: restarted
+        daemon_reload: yes
+        enabled: yes
+
+
+  tasks:
+
+    - name: Install podman
+      package:
+        name: podman
+        state: present
+
+    - name: Create podman group
+      user:
+        name: "{{ podman_group }}"
+        #gid: 1666
+
+    - name: Create podman user
+      user:
+        name: "{{ podman_user }}"
+        #uid: 1666
+        system: true
+
+    - name: Pull an image
+      podman_image:
+        name: "{{ podman_app_name }}"  
+      become: true
+      become_user: "{{ podman_user }}"
+
+    - name: Get image ID
+      command: "podman image inspect -f '{{ '{{' }}.Id{{ '}}' }}' {{ podman_app_name }}"
+      changed_when: false
+      become: true
+      become_user: "{{ podman_user }}"
+      register: podman_inspect_id
+      
+    - set_fact:
+        image_id: "{{ podman_inspect_id.stdout }}"
+
+    - name: Generate systemd file
+      template: 
+        src: "systemd-container-service.j2"
+        dest: "/etc/systemd/system/{{ podman_container_name }}-container.service"
+        owner: root
+        group: root
+        mode: '0664'
+      notify: reload container service

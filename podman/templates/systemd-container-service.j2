@@ -1,0 +1,12 @@
+[Unit]
+Description={{ podman_container_name }} container
+
+[Service]
+User={{ podman_user }}
+Group={{ podman_group }}
+Restart=always
+ExecStart=/usr/bin/podman run --name {{ podman_container_name }} --replace {% if podman_container_run_args is defined %}{% for arg in podman_container_run_args -%}{{ arg }} {% endfor -%}{% endif %} {{ image_id }}
+ExecStop=/usr/bin/podman stop -t 2 {{ podman_container_name }}
+
+[Install]
+WantedBy=local.target
