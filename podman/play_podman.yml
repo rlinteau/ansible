@@ -6,7 +6,6 @@
   vars:
     podman_user: "podman"
     podman_group: "podman"
-    #podman_app_name: "httpd"
     podman_app_name: "docker.io/library/httpd:2.4.39"
     podman_container_name: "web_server1"
     podman_container_run_args:
@@ -20,7 +19,6 @@
         state: restarted
         daemon_reload: yes
         enabled: yes
-
 
   tasks:
 
