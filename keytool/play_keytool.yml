@@ -1,0 +1,31 @@
+---
+- name: Keytool
+  hosts: all
+  become: yes
+
+  vars:
+
+    alias_list:
+      - newkey1
+      - newkey2
+      - newkey3
+      - newkey4
+      - vault
+
+  handlers:
+
+  tasks:
+
+    - name: Read password from file
+      slurp:
+        src: "/root/password_file"
+      no_log: true
+      register: file_content
+
+    - set_fact: 
+        keystore_password: "{{ file_content['content'] | b64decode | trim }}"
+      no_log: true
+
+    - include_tasks: create_key_pair.yml
+      no_log: true
+      loop: "{{ alias_list }}"

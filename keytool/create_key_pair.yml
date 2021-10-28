@@ -1,0 +1,15 @@
+---
+- name: Check if key/pair exist
+  command: "keytool -list -keystore vault.keystore -storepass $STORE_PASS -alias {{ item }}"
+  register: check_result
+  ignore_errors: true
+  changed_when: false
+  environment:
+    STORE_PASS: "{{ keystore_password }}"
+
+- name: Add key/pair
+  command: "keytool -genkeypair -alias {{ item }} -storetype jceks -keysize 2048 -keyalg RSA -storepass $STORE_PASS -keypass $KEY_PASS --dname CN={{ item }} -keystore /root/vault.keystore"
+  environment:
+    STORE_PASS: "{{ keystore_password }}"
+    KEY_PASS: "qwerty123"
+  when: check_result.stdout is search("Alias <" + item + "> does not exist")
