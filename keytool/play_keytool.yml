@@ -8,9 +8,6 @@
     alias_list:
       - newkey1
       - newkey2
-      - newkey3
-      - newkey4
-      - vault
 
   handlers:
 

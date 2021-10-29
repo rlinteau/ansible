@@ -8,7 +8,7 @@
     STORE_PASS: "{{ keystore_password }}"
 
 - name: Add key/pair
-  command: "keytool -genkeypair -alias {{ item }} -storetype jceks -keysize 2048 -keyalg RSA -storepass $STORE_PASS -keypass $KEY_PASS --dname CN={{ item }} -keystore /root/vault.keystore"
+  command: "keytool -genkeypair -alias {{ item }} -storetype jceks -keysize 2048 -keyalg RSA -storepass $STORE_PASS --dname CN={{ item }} -keystore /root/vault.keystore"
   environment:
     STORE_PASS: "{{ keystore_password }}"
     KEY_PASS: "qwerty123"
