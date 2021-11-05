@@ -38,6 +38,18 @@
         #uid: 1666
         system: true
 
+    - name: Check if lingering is enabled for user
+      stat:
+        path: "/var/lib/systemd/linger/{{ podman_user }}"
+        register: is_user_lingering
+      when: podman_user != "root"
+
+    - name: Enable user lingering
+      command: "loginctl enable-linger {{ container_run_as_user }}"
+      when:
+        - podman_user != "root"
+        - not is_user_lingering.stat.exists
+
     - name: Pull an image
       podman_image:
         name: "{{ podman_app_name }}"  
