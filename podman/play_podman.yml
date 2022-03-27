@@ -11,7 +11,7 @@
     podman_container_run_args:
       - "-p 8080:80"
 
-  handlers:
+  ha ndlers:
 
     - name: reload container service
       systemd:
