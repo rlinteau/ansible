@@ -15,12 +15,12 @@
 
     - name: reload container service
       systemd:
-      name: "{{ podman_container_name }}-container"
+        name: "{{ podman_container_name }}-container"
         state: restarted
         daemon_reload: yes
         enabled: yes
 
-  tasks    :
+  tasks:
 
     - name: Install podman
       package:
